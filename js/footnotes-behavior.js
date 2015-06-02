@@ -24,8 +24,7 @@
       footnotes.push({
         trigger_id: $footnote_trigger.attr('id'),
         footnote_id: $footnote_trigger.attr('id') + '-footnote',
-        note: $footnote_trigger.html(),
-        symbol: '[' + (i++ + 1) + ']'
+        note: $footnote_trigger.html()
       });
     });
     return footnotes;
