@@ -1,0 +1,6 @@
+name = Behaviors example
+description = Demonstrates several examples of the use and misuse of Drupal behaviors.
+core = 7.x
+
+dependencies[] = examples
+dependencies[] = devel_generate

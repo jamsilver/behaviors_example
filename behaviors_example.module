@@ -1,0 +1,216 @@
+<?php
+
+/**
+ * @file
+ * Main module file.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function behaviors_example_menu() {
+  $items = array();
+
+  $items['examples/behaviors_example'] = array(
+    'title' => 'Drupal.behaviors Example',
+    'page callback' => 'behaviors_example_intro',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  $weight = 0;
+
+  $items['examples/behaviors_example/nothing'] = array(
+    'title' => 'Show/hide: no javascript',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('behaviors_example_show_more', NULL, TRUE),
+    'file' => 'includes/show_more.inc',
+    'access callback' => TRUE,
+    'weight' => $weight += 10,
+  );
+
+  $items['examples/behaviors_example/showmore-jquery'] = array(
+    'title' => 'Show/hide: jQuery-only',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('behaviors_example_show_more', 'showmore-jquery', TRUE),
+    'file' => 'includes/show_more.inc',
+    'access callback' => TRUE,
+    'weight' => $weight += 10,
+  );
+
+  $items['examples/behaviors_example/showmore-jquery-breaks'] = array(
+    'title' => 'Show/hide: jQuery-only breaks',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('behaviors_example_show_more', 'showmore-jquery'),
+    'file' => 'includes/show_more.inc',
+    'access callback' => TRUE,
+    'weight' => $weight += 10,
+  );
+
+  $items['examples/behaviors_example/showmore-behavior'] = array(
+    'title' => 'Show/hide: behaviors to the rescue!',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('behaviors_example_show_more', 'showmore-behavior'),
+    'file' => 'includes/show_more.inc',
+    'access callback' => TRUE,
+    'weight' => $weight += 10,
+  );
+
+  $items['examples/behaviors_example/footnotes-intro'] = array(
+    'title' => 'Footnotes would be nice',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('behaviors_example_footnotes', NULL, FALSE),
+    'file' => 'includes/footnotes.inc',
+    'access callback' => TRUE,
+    'weight' => $weight += 10,
+  );
+
+  $items['examples/behaviors_example/footnotes-jquery'] = array(
+    'title' => 'Footnotes: First pass',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('behaviors_example_footnotes', 'footnotes-jquery', FALSE),
+    'file' => 'includes/footnotes.inc',
+    'access callback' => TRUE,
+    'weight' => $weight += 10,
+  );
+
+  $items['examples/behaviors_example/footnotes-jquery-fail'] = array(
+    'title' => 'Footnotes: First pass',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('behaviors_example_footnotes', 'footnotes-jquery'),
+    'file' => 'includes/footnotes.inc',
+    'access callback' => TRUE,
+    'weight' => $weight += 10,
+  );
+
+  $items['examples/behaviors_example/footnotes-nearly-fixed'] = array(
+    'title' => 'Footnotes: behaviors to the rescue! ... nearly',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('behaviors_example_footnotes', 'footnotes-behavior'),
+    'file' => 'includes/footnotes.inc',
+    'access callback' => TRUE,
+    'weight' => $weight += 10,
+  );
+
+  $items['examples/behaviors_example/footnotes-fixed'] = array(
+    'title' => 'Footnotes: Detach to the rescue!',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('behaviors_example_footnotes', 'footnotes-behavior-detach'),
+    'file' => 'includes/footnotes.inc',
+    'access callback' => TRUE,
+    'weight' => $weight += 10,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_admin_paths().
+ */
+function behaviors_example_admin_paths() {
+  $paths = array(
+    'examples/behaviors_example' => TRUE,
+    'examples/behaviors_example/*' => TRUE,
+  );
+  return $paths;
+}
+
+/**
+ * A basic introduction page for the behaviors_example module.
+ */
+function behaviors_example_intro() {
+  $markup = t('The Drupal.behaviors example module provides many examples of Drupal.behaviors.');
+
+  $items = behaviors_example_menu();
+  unset($items['examples/behaviors_example']);
+  uasort($items, 'drupal_sort_weight');
+
+  $list = array();
+  foreach ($items as $path => $item) {
+    $list[] = l($item['title'], $path);
+  }
+
+  $variables['items'] = $list;
+  $variables['type'] = 'ul';
+  $markup .= theme('item_list', $variables);
+
+  return $markup;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function behaviors_example_theme() {
+  return array(
+    'behaviors_example_footnotes' => array(
+      'file' => 'includes/footnotes.inc',
+      'render element' => 'form',
+    ),
+  );
+}
+
+/**
+ * Return the Drupal menu path for the next example page.
+ *
+ * @return array
+ *   An array containing the 'path' and 'options' keys used to build the URI of
+ *   the page, and matching the signature of url(). NULL if this is the last
+ *   step.
+ */
+function behaviors_example_get_next_step_uri($path = NULL) {
+  if (!isset($path)) {
+    $path = drupal_get_normal_path(request_path());
+  }
+  $items = behaviors_example_menu();
+  unset($items['examples/behaviors_example']);
+  uasort($items, 'drupal_sort_weight');
+  $paths = array_keys($items);
+  $current_pos = array_search($path, $paths);
+  $next_pos = $current_pos + 1;
+  if (isset($paths[$next_pos])) {
+    $next_path = $paths[$next_pos];
+    $next_menu_item = $items[$next_path];
+    return array(
+      'path' => $next_path,
+      'options' => array(
+        'attributes' => array(
+          'title' => $next_menu_item['title'],
+        ),
+      ),
+    );
+  }
+  return NULL;
+}
+
+/**
+ * Return the Drupal menu path for the previous example page.
+ *
+ * @return array
+ *   An array containing the 'path' and 'options' keys used to build the URI of
+ *   the page, and matching the signature of url(). NULL if this is the first
+ *   step.
+ */
+function behaviors_example_get_previous_step_uri($path = NULL) {
+  if (!isset($path)) {
+    $path = drupal_get_normal_path(request_path());
+  }
+  $items = behaviors_example_menu();
+  unset($items['examples/behaviors_example']);
+  uasort($items, 'drupal_sort_weight');
+  $paths = array_keys($items);
+  $current_pos = array_search($path, $paths);
+  $prev_pos = $current_pos - 1;
+  if (isset($paths[$prev_pos])) {
+    $prev_path = $paths[$prev_pos];
+    $next_menu_item = $items[$prev_path];
+    return array(
+      'path' => $prev_path,
+      'options' => array(
+        'attributes' => array(
+          'title' => $next_menu_item['title'],
+        ),
+      ),
+    );
+  }
+  return NULL;
+}

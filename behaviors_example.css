@@ -1,0 +1,14 @@
+.examples-nav {
+  margin-top: 30px;
+  float: right;
+}
+
+.footnote {
+  color: grey;
+}
+.footnote:before {
+  content: '(';
+}
+.footnote:after {
+  content: ')';
+}
