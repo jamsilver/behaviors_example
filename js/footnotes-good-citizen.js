@@ -23,7 +23,8 @@
               if (footnotes[i]) {
                 var footnote = footnotes[i];
                 if (('#' + footnote.footnote_id) === $footnote_link.attr('href')) {
-                  remove_footnote(i);
+                  remove_footnote(footnotes[footnote_index]);
+                  delete footnotes[footnote_index];
                   break;
                 }
               }
@@ -107,16 +108,12 @@
   /**
    * Remove the footnote at the given index of our array.
    */
-  var remove_footnote = function(footnote_index) {
-    if (footnotes[footnote_index]) {
-      var footnote = footnotes[footnote_index],
-        $footnote_link = $('#' + footnote.trigger_id),
-        $footnote_target = $('#' + footnote.footnote_id),
-        $footnote = $footnote_target.closest('dt').prev().addBack();
+  var remove_footnote = function(footnote) {
+    var $footnote_link = $('#' + footnote.trigger_id),
+      $footnote_target = $('#' + footnote.footnote_id),
+      $footnote = $footnote_target.closest('dt').prev().addBack();
       $footnote.remove();
       $footnote_link.remove();
-      delete footnotes[footnote_index];
-    }
   };
 
 
