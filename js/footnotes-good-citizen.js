@@ -10,6 +10,30 @@
         index_footnotes(footnotes);
         render_footnotes(footnotes);
       }
+    },
+
+    detach: function(context, settings, trigger) {
+      if (trigger === 'unload') {
+        var $footnote_links = $(context).find('.footnote-link');
+        if ($footnote_links.length) {
+          // Remove all trace of footnotes linked to in the removed content.
+          $footnote_links.each(function () {
+            var $footnote_link = $(this);
+            for (var i = 0; i < footnotes.length; i++) {
+              if (footnotes[i]) {
+                var footnote = footnotes[i];
+                if (('#' + footnote.footnote_id) === $footnote_link.attr('href')) {
+                  remove_footnote(i);
+                  break;
+                }
+              }
+            }
+          });
+          // Need to reset numbering.
+          index_footnotes(footnotes);
+          render_footnotes(footnotes);
+        }
+      }
     }
   };
 
@@ -67,9 +91,15 @@
         }
       }
       // Render the footnote list at the foot of the page.
-      $content.find('.footnotes-wrapper').remove();
+      var $old_footnotes = $content.find('.footnotes-wrapper');
+      if ($old_footnotes.length) {
+        Drupal.detachBehaviors($old_footnotes.get(0));
+        $old_footnotes.remove();
+      }
       if (at_least_one_footnote) {
-        $content.append(Drupal.theme('behaviors_example_footnotes', footnotes));
+        var $new_footnotes = $(Drupal.theme('behaviors_example_footnotes', footnotes));
+        $content.append($new_footnotes);
+        Drupal.attachBehaviors($new_footnotes.get(0));
       }
     }
   };
@@ -120,6 +150,12 @@
       output += '<h3>';
       output += Drupal.t('Footnotes');
       output += '</h3>';
+      output += '<p>';
+      output += 'Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.';
+      output += '</p>';
+      output += '<div class="show-moreable message warning">';
+      output += 'Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.';
+      output += '</div>';
       output += '<dl class="footnotes">';
       for (var i = 0; i < footnotes.length; i++) {
         if (footnotes[i]) {

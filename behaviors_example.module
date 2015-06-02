@@ -95,7 +95,16 @@ function behaviors_example_menu() {
   $items['examples/behaviors_example/footnotes-fixed'] = array(
     'title' => 'Footnotes: Detach to the rescue!',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('behaviors_example_footnotes', 'footnotes-behavior-detach'),
+    'page arguments' => array('behaviors_example_footnotes', 'footnotes-behavior-detach', TRUE),
+    'file' => 'includes/footnotes.inc',
+    'access callback' => TRUE,
+    'weight' => $weight += 10,
+  );
+
+  $items['examples/behaviors_example/footnotes-good-citizen'] = array(
+    'title' => 'Footnotes: Be a good Drupal.behaviors citizen',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('behaviors_example_footnotes', 'footnotes-good-citizen', TRUE),
     'file' => 'includes/footnotes.inc',
     'access callback' => TRUE,
     'weight' => $weight += 10,

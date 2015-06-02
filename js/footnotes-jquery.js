@@ -35,6 +35,7 @@
   var render_footnotes = function(footnotes) {
     var $content = $('#content');
     if ($content) {
+      $('.footnote-link').remove();
       // Hide original footnote span & add link.
       for (var i = 0; i < footnotes.length; i++) {
         if (footnotes[i]) {

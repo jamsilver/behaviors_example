@@ -31,15 +31,29 @@ function behaviors_example_footnotes($form, &$form_state, $variant = NULL, $tabl
         '#title_display' => 'invisible',
         '#title' => t('Weight for @title', array('@title' => "item {$item_id}")),
       ),
+      'operations' => array(
+        'delete' => array(
+          '#type' => 'link',
+          '#title' => t('remove'),
+          '#href' => FALSE,
+          '#attributes' => array(
+            'class' => array(
+              'remove-row',
+            ),
+          ),
+        ),
+      ),
       '#attributes' => array(),
     );
   }
 
   $module_path = drupal_get_path('module', 'behaviors_example');
+  $form['#attached']['js'][] = "{$module_path}/js/showmore-behavior.js";
   if (isset($variant)) {
     $form['#attached']['js'][] = "{$module_path}/js/{$variant}.js";
   }
   $form['#attached']['css'][] = "{$module_path}/behaviors_example.css";
+  $form['#attached']['js'][] = "{$module_path}/js/remove-row.js";
 
   $form['actions'] = array(
     '#type' => 'actions',
@@ -89,6 +103,7 @@ function theme_behaviors_example_footnotes($variables) {
   if ($enable_tablesort_mode) {
     $header[] = t('Weight');
   }
+  $header[] = t('Operations');
   $rows = array();
   foreach (element_children($form['items']) as $item_id) {
     $element = &$form['items'][$item_id];
@@ -104,6 +119,7 @@ function theme_behaviors_example_footnotes($variables) {
     else {
       hide($element['weight']);
     }
+    $row[] = drupal_render($element['operations']);
 
     $row = array_merge(array('data' => $row), $element['#attributes']);
     $row['class'][] = 'draggable';

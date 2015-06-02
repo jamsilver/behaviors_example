@@ -10,6 +10,30 @@
         index_footnotes(footnotes);
         render_footnotes(footnotes);
       }
+    },
+
+    detach: function(context, settings, trigger) {
+      if (trigger === 'unload') {
+        var $footnote_links = $(context).find('.footnote-link');
+        if ($footnote_links.length) {
+          // Remove all trace of footnotes linked to in the removed content.
+          $footnote_links.each(function () {
+            var $footnote_link = $(this);
+            for (var i = 0; i < footnotes.length; i++) {
+              if (footnotes[i]) {
+                var footnote = footnotes[i];
+                if (('#' + footnote.footnote_id) === $footnote_link.attr('href')) {
+                  remove_footnote(i);
+                  break;
+                }
+              }
+            }
+          });
+          // Need to reset numbering.
+          index_footnotes(footnotes);
+          render_footnotes(footnotes);
+        }
+      }
     }
   };
 
@@ -120,6 +144,12 @@
       output += '<h3>';
       output += Drupal.t('Footnotes');
       output += '</h3>';
+      output += '<p>';
+      output += 'Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.';
+      output += '</p>';
+      output += '<div class="show-moreable message warning">';
+      output += 'Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.';
+      output += '</div>';
       output += '<dl class="footnotes">';
       for (var i = 0; i < footnotes.length; i++) {
         if (footnotes[i]) {
