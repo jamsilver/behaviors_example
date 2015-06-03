@@ -1,7 +1,10 @@
 (function($) {
 
+  var footnotes = [];
+
   $(function() {
-    var footnotes = collect_footnotes();
+    footnotes = collect_footnotes();
+    index_footnotes(footnotes);
     render_footnotes(footnotes);
   });
 
@@ -10,36 +13,43 @@
    */
   var collect_footnotes = function() {
     var footnotes = [];
-    var i = 0;
     $('.footnote').each(function() {
       var $footnote_trigger = $(this);
-      var footnote = $footnote_trigger.text();
-      if (footnote) {
-        footnotes.push({
-          trigger_id: $footnote_trigger.attr('id'),
-          footnote_id: $footnote_trigger.attr('id') + '-footnote',
-          note: footnote,
-          symbol: '[' + (i++ + 1) + ']'
-        });
-      }
+      footnotes.push({
+        trigger_id: $footnote_trigger.attr('id'),
+        footnote_id: $footnote_trigger.attr('id') + '-footnote',
+        note: $footnote_trigger.html()
+      });
     });
     return footnotes;
   };
 
   /**
-   * Render all footnotes.
-   *
-   * This renders the appropriate symbol next to each footnote link
-   * and the footnote list itself.
+   * Assign symbols to footnotes.
+   */
+  var index_footnotes = function(footnotes) {
+    var footnote_index = 1;
+    for (var i = 0; i < footnotes.length; i++) {
+      if (footnotes[i]) {
+        var footnote = footnotes[i];
+        footnote.symbol = '[' + (footnote_index++) + ']';
+      }
+    }
+  };
+
+  /**
+   * Render all footnotes at the foot of the content region.
    */
   var render_footnotes = function(footnotes) {
     var $content = $('#content');
     if ($content) {
+      var at_least_one_footnote = false;
       $('.footnote-link').remove();
       // Hide original footnote span & add link.
       for (var i = 0; i < footnotes.length; i++) {
         if (footnotes[i]) {
           var footnote = footnotes[i];
+          at_least_one_footnote = true;
           var $footnote_trigger = $('#' + footnote.trigger_id);
           $footnote_trigger
             .hide()
@@ -48,17 +58,15 @@
       }
       // Render the footnote list at the foot of the page.
       $content.find('.footnotes-wrapper').remove();
-      $content.append(Drupal.theme('behaviors_example_footnotes', footnotes));
+      if (at_least_one_footnote) {
+        var $new_footnotes = $(Drupal.theme('behaviors_example_footnotes', footnotes));
+        $content.append($new_footnotes);
+      }
     }
   };
 
-
   /**
    * Provide markup for the page footnotes.
-   *
-   * @param footnotes
-   *
-   * @returns {string}
    */
   Drupal.theme.prototype.behaviors_example_footnote_link = function(symbol, footnote_id) {
     var output = '';
@@ -71,10 +79,6 @@
 
   /**
    * Provide markup for the page footnotes.
-   *
-   * @param footnotes
-   *
-   * @returns {string}
    */
   Drupal.theme.prototype.behaviors_example_footnotes = function(footnotes) {
     var output = '';
@@ -104,18 +108,13 @@
 
   /**
    * Provide markup for the page footnotes.
-   *
-   * @param id
-   * @param note
-   *
-   * @returns {string}
    */
   Drupal.theme.prototype.behaviors_example_footnote = function(id, note) {
     var output = '';
-    output += '<a id="' + id + '" class="footnote-anchor"></a>';
+    output += '<a id="' + id + '" class="footnote-anchor">';
     output += '</a>';
     output += '<span class="footnote-note">';
-    output += Drupal.checkPlain(note);
+    output += note;
     output += '</span>';
     return output;
   };

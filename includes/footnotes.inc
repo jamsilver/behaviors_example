@@ -102,8 +102,8 @@ function theme_behaviors_example_footnotes($variables) {
   );
   if ($enable_tablesort_mode) {
     $header[] = t('Weight');
+    $header[] = t('Operations');
   }
-  $header[] = t('Operations');
   $rows = array();
   foreach (element_children($form['items']) as $item_id) {
     $element = &$form['items'][$item_id];
@@ -115,11 +115,12 @@ function theme_behaviors_example_footnotes($variables) {
     $row[] = drupal_render($element['copy']);
     if ($enable_tablesort_mode) {
       $row[] = drupal_render($element['weight']);
+      $row[] = drupal_render($element['operations']);
     }
     else {
       hide($element['weight']);
+      hide($element['operations']);
     }
-    $row[] = drupal_render($element['operations']);
 
     $row = array_merge(array('data' => $row), $element['#attributes']);
     $row['class'][] = 'draggable';

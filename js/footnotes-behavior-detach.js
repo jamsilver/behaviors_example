@@ -16,14 +16,15 @@
       if (trigger === 'unload') {
         var $footnote_links = $(context).find('.footnote-link');
         if ($footnote_links.length) {
-          // Remove all trace of footnotes linked to in the removed content.
-          $footnote_links.each(function () {
+          // Remove all trace of footnotes which are about to be removed.
+          $footnote_links.each(function() {
             var $footnote_link = $(this);
             for (var i = 0; i < footnotes.length; i++) {
               if (footnotes[i]) {
                 var footnote = footnotes[i];
                 if (('#' + footnote.footnote_id) === $footnote_link.attr('href')) {
-                  remove_footnote(i);
+                  remove_footnote(footnote);
+                  delete footnotes[i];
                   break;
                 }
               }
@@ -42,7 +43,6 @@
    */
   var collect_footnotes = function() {
     var footnotes = [];
-    var i = 0;
     $('.footnote').each(function() {
       var $footnote_trigger = $(this);
       footnotes.push({
@@ -68,10 +68,7 @@
   };
 
   /**
-   * Render all footnotes.
-   *
-   * This renders the appropriate symbol next to each footnote link
-   * and the footnote list itself.
+   * Render all footnotes at the foot of the content region.
    */
   var render_footnotes = function(footnotes) {
     var $content = $('#content');
@@ -92,7 +89,8 @@
       // Render the footnote list at the foot of the page.
       $content.find('.footnotes-wrapper').remove();
       if (at_least_one_footnote) {
-        $content.append(Drupal.theme('behaviors_example_footnotes', footnotes));
+        var $new_footnotes = $(Drupal.theme('behaviors_example_footnotes', footnotes));
+        $content.append($new_footnotes);
       }
     }
   };
@@ -100,25 +98,17 @@
   /**
    * Remove the footnote at the given index of our array.
    */
-  var remove_footnote = function(footnote_index) {
-    if (footnotes[footnote_index]) {
-      var footnote = footnotes[footnote_index],
-        $footnote_link = $('#' + footnote.trigger_id),
-        $footnote_target = $('#' + footnote.footnote_id),
-        $footnote = $footnote_target.closest('dt').prev().addBack();
-      $footnote.remove();
-      $footnote_link.remove();
-      delete footnotes[footnote_index];
-    }
+  var remove_footnote = function(footnote) {
+    var $footnote_link = $('#' + footnote.trigger_id),
+      $footnote_target = $('#' + footnote.footnote_id),
+      $footnote = $footnote_target.closest('dt').prev().addBack();
+    $footnote.remove();
+    $footnote_link.remove();
   };
 
 
   /**
    * Provide markup for the page footnotes.
-   *
-   * @param footnotes
-   *
-   * @returns {string}
    */
   Drupal.theme.prototype.behaviors_example_footnote_link = function(symbol, footnote_id) {
     var output = '';
@@ -131,10 +121,6 @@
 
   /**
    * Provide markup for the page footnotes.
-   *
-   * @param footnotes
-   *
-   * @returns {string}
    */
   Drupal.theme.prototype.behaviors_example_footnotes = function(footnotes) {
     var output = '';
@@ -170,15 +156,10 @@
 
   /**
    * Provide markup for the page footnotes.
-   *
-   * @param id
-   * @param note
-   *
-   * @returns {string}
    */
   Drupal.theme.prototype.behaviors_example_footnote = function(id, note) {
     var output = '';
-    output += '<a id="' + id + '" class="footnote-anchor"></a>';
+    output += '<a id="' + id + '" class="footnote-anchor">';
     output += '</a>';
     output += '<span class="footnote-note">';
     output += note;
