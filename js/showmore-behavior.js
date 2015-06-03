@@ -4,7 +4,7 @@
     attach: function(context, settings) {
       $(context).find('.show-moreable').once('show-moreable', function() {
         // Allow strings to come from server.
-        var strings = settings.behaviors_examples,
+        var strings = settings.behaviors_examples || {},
           show_more_text = strings.show_more_text || Drupal.t('Show more'),
           show_less_text = strings.show_less_text || Drupal.t('Show less');
         // Make the magic happen.

@@ -132,7 +132,7 @@
       output += '<p>';
       output += 'Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.';
       output += '</p>';
-      output += '<div class="show-moreable message warning">';
+      output += '<div class="show-moreable messages warning">';
       output += 'Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.';
       output += '</div>';
       output += '<dl class="footnotes">';

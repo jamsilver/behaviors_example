@@ -10,6 +10,14 @@
  */
 function behaviors_example_show_more($form, &$form_state, $variant = NULL, $no_js_use = FALSE) {
 
+  $js_settings = array(
+    'behaviors_examples' => array(
+      'show_more_text' => t('Read more'),
+      'show_less_text' => t('Read less'),
+    ),
+  );
+  $form['#attached']['js'][] = array('data' => $js_settings, 'type' => 'setting');
+
   $form['#tree'] = TRUE;
   $form['items_fieldset'] = array(
     '#type' => 'fieldset',

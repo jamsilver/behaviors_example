@@ -92,12 +92,6 @@
       output += '<h3>';
       output += Drupal.t('Footnotes');
       output += '</h3>';
-      output += '<p>';
-      output += 'Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.';
-      output += '</p>';
-      output += '<div class="show-moreable message warning">';
-      output += 'Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.';
-      output += '</div>';
       output += '<dl class="footnotes">';
       for (var i = 0; i < footnotes.length; i++) {
         if (footnotes[i]) {

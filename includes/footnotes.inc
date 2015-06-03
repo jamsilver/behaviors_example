@@ -10,6 +10,14 @@
  */
 function behaviors_example_footnotes($form, &$form_state, $variant = NULL, $table_sort = TRUE) {
 
+  $js_settings = array(
+    'behaviors_examples' => array(
+      'show_more_text' => t('Read more'),
+      'show_less_text' => t('Read less'),
+    ),
+  );
+  $form['#attached']['js'][] = array('data' => $js_settings, 'type' => 'setting');
+
   $number_of_rows = 10;
 
   $form['table_sort'] = array(
